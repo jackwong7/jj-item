@@ -19,37 +19,55 @@ on:
   workflow_dispatch:
 
 jobs:
-  push_to_registries:
-    name: Push Docker image to multiple registries
+  build:
+
     runs-on: ubuntu-latest
+
     permissions:
       packages: write
       contents: read
+
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
-      
-      - name: Log in to Docker Hub
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+
+      - name: Set time zone
+        uses: szenius/set-timezone@v1.0
+        with:
+          timezoneLinux: "Asia/Shanghai"
+          timezoneMacos: "Asia/Shanghai"
+          timezoneWindows: "China Standard Time"
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      
-      #- name: Log in to the Container registry
-      #  uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-      #  with:
-      #    registry: ghcr.io
-      #    username: ${{ github.actor }}
-      #    password: ${{ secrets.GITHUB_TOKEN }}
-      
+
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        uses: docker/metadata-action@v4
         with:
           images: |
-            my-docker-hub-namespace/my-docker-hub-repository
-            ghcr.io/${{ github.repository }}
-      
+            ${{ secrets.DOCKER_USERNAME }}/jue
+            ghcr.io/${{ secrets.DOCKER_USERNAME }}/jue
+          # generate Docker tags based on the following events/attributes
+          #   nightly, master, pr-2, 1.2.3, 1.2, 1
+          tags: |
+            type=schedule,pattern=nightly
+            type=edge
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -60,8 +78,12 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v3
         with:
-          context: .
-          push: true
+          build-args: |
+            MAINTAINER=${{ github.repository_owner }}
+            QL_BRANCH=${{ github.ref_name }}
+          network: host
           platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
-          tags: ${{ secrets.DOCKER_USERNAME }}/jue
+          context: docker/
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
