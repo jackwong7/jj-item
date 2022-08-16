@@ -3,3 +3,18 @@ services:
   juejin:
     build: .
     container_name: juejin
+    environment:
+      #掘金网站Cookie(必填,最少需要一个cookie)
+      - COOKIE=
+      #多用户, 当需要同时运行多个掘金用户时所需, 支持最多 5 名用户(即COOKIE + COOKIE_2 - COOKIE_5)
+      - COOKIE_2=
+      #发件人邮箱地址(需要开启 SMTP)
+      - EMAIL_USER=
+      #发件人邮箱密码(SMTP密码)
+      - EMAIL_PASS=
+      #订阅人邮箱地址(收件人). 如需多人订阅使用 , 分割, 例如: a@163.com, b@qq.com
+      - EMAIL_TO=
+      #钉钉机器人WEBHOOK
+      - DINGDING_WEBHOOK
+      #PUSHPLUS_TOKEN
+      - PUSHPLUS_TOKEN
