@@ -83,7 +83,7 @@ jobs:
             QL_BRANCH=${{ github.ref_name }}
           network: host
           platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
-          context: docker/
+          context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
