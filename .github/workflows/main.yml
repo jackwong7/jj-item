@@ -51,5 +51,6 @@ jobs:
         with:
           context: .
           push: true
+          platform: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/s390x 
           tags: ${{ secrets.DOCKER_USERNAME }}/jue
           labels: ${{steps.version.outputs.result}}
