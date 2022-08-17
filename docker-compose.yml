@@ -3,6 +3,7 @@ services:
   juejin:
     build: .
     container_name: juejin
+    restart: always
     environment:
       #掘金网站Cookie(必填,最少需要一个cookie)
       - COOKIE=
