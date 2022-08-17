@@ -16,6 +16,6 @@ services:
       #订阅人邮箱地址(收件人). 如需多人订阅使用 , 分割, 例如: a@163.com, b@qq.com
       - EMAIL_TO=
       #钉钉机器人WEBHOOK
-      - DINGDING_WEBHOOK
+      - DINGDING_WEBHOOK=
       #PUSHPLUS_TOKEN
-      - PUSHPLUS_TOKEN
+      - PUSHPLUS_TOKEN=
