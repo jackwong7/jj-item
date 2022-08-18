@@ -11,6 +11,7 @@ RUN cp /usr/share/zoneinfo/$TZ /etc/localtime \
     && apt-get update && apt-get install cron \
     && echo "PATH=/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /var/spool/cron/crontabs/root \
     && echo "5 7 * * * cd /var/dev/juejin-helper/workflows && yarn checkin" >> /var/spool/cron/crontabs/root \
-    && echo "15 7 * * * cd /var/dev/juejin-helper/workflows && yarn seagold" >> /var/spool/cron/crontabs/root
+    && echo "15 7 * * * cd /var/dev/juejin-helper/workflows && yarn seagold" >> /var/spool/cron/crontabs/root \
+    && crontab /var/spool/cron/crontabs/root
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
